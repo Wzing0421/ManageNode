@@ -49,5 +49,11 @@
             <version>4.2.6.RELEASE</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.etcd</groupId>
+            <artifactId>jetcd-core</artifactId>
+            <version>0.3.0</version>
+        </dependency>
+
     </dependencies>
 </project>

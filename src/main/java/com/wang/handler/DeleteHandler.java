@@ -12,28 +12,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 @Component
 public class DeleteHandler extends BaseHttpHandler {
-    @Override
-    protected void handleGet(HttpExchange httpExchange) throws Exception {
-        String responseText = "请求方法：" + httpExchange.getRequestMethod() + "<br/>" +
-                "请求参数：" + getRequestParam(httpExchange) + "<br/>" +
-                "请求头：<br/>" + getRequestHeader(httpExchange);
-        responseText += "deleteHandler";
-        handleResponse(httpExchange, responseText);
-    }
-
-    @Override
-    protected void handlePost(HttpExchange httpExchange) throws Exception{
-        StringBuilder responseText = new StringBuilder();
-        responseText.append("请求方法：").append(httpExchange.getRequestMethod()).append("<br/>");
-        responseText.append("请求参数：").append(getRequestParam(httpExchange)).append("<br/>");
-        responseText.append("请求头：<br/>").append(getRequestHeader(httpExchange));
-        handleResponse(httpExchange, responseText.toString());
-    }
-
-    @Override
-    protected void handlePut(HttpExchange httpExchange) throws Exception{
-        return;
-    }
 
     /**
      * 获取请求头
@@ -65,6 +43,7 @@ public class DeleteHandler extends BaseHttpHandler {
             StringBuilder requestBodyContent = new StringBuilder();
             String line = null;
             while ((line = bufferedReader.readLine()) != null) {
+                System.out.println(line);
                 requestBodyContent.append(line);
             }
             paramStr = requestBodyContent.toString();
@@ -73,32 +52,4 @@ public class DeleteHandler extends BaseHttpHandler {
         return paramStr;
     }
 
-    /**
-     * 处理响应
-     * @param httpExchange
-     * @param responsetext
-     * @throws Exception
-     */
-    private void handleResponse(HttpExchange httpExchange, String responsetext) throws Exception {
-        //生成html
-        StringBuilder responseContent = new StringBuilder();
-        responseContent.append("<html>")
-                .append("<body>")
-                .append(responsetext)
-                .append("</body>")
-                .append("</html>");
-        String responseContentStr = responseContent.toString();
-        byte[] responseContentByte = responseContentStr.getBytes("utf-8");
-
-        //设置响应头，必须在sendResponseHeaders方法之前设置！
-        httpExchange.getResponseHeaders().add("Content-Type:", "text/html;charset=utf-8");
-
-        //设置响应码和响应体长度，必须在getResponseBody方法之前调用！
-        httpExchange.sendResponseHeaders(200, responseContentByte.length);
-
-        OutputStream out = httpExchange.getResponseBody();
-        out.write(responseContentByte);
-        out.flush();
-        out.close();
-    }
 }
