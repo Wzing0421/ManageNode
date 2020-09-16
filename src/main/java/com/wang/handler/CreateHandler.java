@@ -6,15 +6,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import com.wang.etcd.*;
 
 @Component
 public class CreateHandler extends BaseHttpHandler{
@@ -61,4 +57,16 @@ public class CreateHandler extends BaseHttpHandler{
     }
 
 
+    /**
+     * insert method for put
+     * @param parameters
+     * @throws Exception
+     */
+    @Override
+    protected void doHandlePut(Map<String, String> parameters) throws Exception {
+        String ueid = parameters.get("ueid");
+        String s_tmsi = parameters.get("s_tmsi");
+        EtcdUtil.getEtcdClient();
+        EtcdUtil.putEtcdValueByKey(ueid, s_tmsi);
+    }
 }

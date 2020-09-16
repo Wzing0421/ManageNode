@@ -2,6 +2,7 @@ package com.wang.handler;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+import com.wang.etcd.EtcdUtil;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -52,4 +53,15 @@ public class DeleteHandler extends BaseHttpHandler {
         return paramStr;
     }
 
+    /**
+     * delete method for put
+     * @param parameters
+     * @throws Exception
+     */
+    @Override
+    protected void doHandlePut(Map<String, String> parameters) throws Exception{
+        String ueid = parameters.get("ueid");
+        EtcdUtil.getEtcdClient();
+        EtcdUtil.deleteEtcdValueByKey(ueid);
+    }
 }

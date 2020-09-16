@@ -50,7 +50,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
             System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
         }
         // your own logic here
-
+        doHandlePut(parameters);
         String responseText = "success";
         //responseCode 是状态码
         int responseCode = 200;
@@ -125,5 +125,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
         out.flush();
         out.close();
     }
+
+    abstract protected void doHandlePut(Map<String, String> parameters) throws Exception;
 
 }
