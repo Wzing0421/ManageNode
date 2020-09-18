@@ -97,6 +97,13 @@ public class EtcdService {
         EtcdUtil.putEtcdValueByKey(keyStr, valueStr);
     }
 
+    public void putNodeIdIntoEtcd(Integer nodeId) throws Exception {
+        EtcdUtil.getEtcdClient();
+        String keyStr = EtcdConfig.NodeTable + Integer.toString(nodeId);
+        String valueStr = "1";
+        EtcdUtil.putEtcdValueByKey(keyStr, valueStr);
+    }
+
     /**
      * delete from etcd, key is:
      * 1. UEID_<ueid>

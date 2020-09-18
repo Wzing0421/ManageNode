@@ -3,6 +3,7 @@ package com.wang.server;
 import com.sun.net.httpserver.HttpServer;
 import com.wang.handler.CreateHandler;
 import com.wang.handler.DeleteHandler;
+import com.wang.handler.NodeRegisterHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,9 @@ public class httpServer {
     @Autowired
     private DeleteHandler deleteHandler;
 
+    @Autowired
+    private NodeRegisterHandler nodeRegisterHandler;
+
     public void run() throws IOException{
         HttpServer createServer = HttpServer.create(new InetSocketAddress(8080), 0);
         createServer.createContext("/ManageNodeServer/Call/create", createHandler);
@@ -25,5 +29,9 @@ public class httpServer {
         HttpServer deleteServer = HttpServer.create(new InetSocketAddress(8081), 0);
         deleteServer.createContext("/ManageNodeServer/Call/delete", deleteHandler);
         deleteServer.start();
+
+        HttpServer registerServer = HttpServer.create(new InetSocketAddress(8082), 0);
+        registerServer.createContext("/ManageNodeServer/Register", nodeRegisterHandler);
+        registerServer.start();
     }
 }

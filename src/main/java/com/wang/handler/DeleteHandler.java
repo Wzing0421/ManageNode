@@ -69,4 +69,9 @@ public class DeleteHandler extends BaseHttpHandler {
         String stmsi = parameters.get("s_tmsi");
         etcdService.deleteUeidAndStmsiFromEtcd(ueid, stmsi);
     }
+
+    @Override
+    protected Integer doHandlePost(Map<String, String> parameters) throws Exception {
+        return null;
+    }
 }

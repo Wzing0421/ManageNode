@@ -41,7 +41,14 @@ public abstract class BaseHttpHandler implements HttpHandler {
     }
 
     private void handlePost(HttpExchange httpExchange) throws Exception{
-
+        Map<String, String> parameters = parsePostParameters(httpExchange);
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+        }
+        Integer nodeId = doHandlePost(parameters);
+        //responseCode 是状态码
+        int responseCode = 200;
+        handleResponse(httpExchange, Integer.toString(nodeId), responseCode);
     }
 
     private void handlePut(HttpExchange httpExchange) throws Exception{
@@ -49,7 +56,6 @@ public abstract class BaseHttpHandler implements HttpHandler {
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
         }
-        // your own logic here
         doHandlePut(parameters);
         String responseText = "success";
         //responseCode 是状态码
@@ -96,6 +102,14 @@ public abstract class BaseHttpHandler implements HttpHandler {
         }
     }
 
+    private Map<String, String> parsePostParameters(HttpExchange exchange)
+            throws UnsupportedEncodingException{
+        Map<String, String> parameters = new HashMap<String, String>();
+        URI requestedUri = exchange.getRequestURI();
+        String query = requestedUri.getRawQuery();
+        parseQuery(query, parameters);
+        return parameters;
+    }
     /**
      * 处理响应
      *
@@ -127,5 +141,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
     }
 
     abstract protected void doHandlePut(Map<String, String> parameters) throws Exception;
+
+    abstract protected Integer doHandlePost(Map<String, String> parameters) throws Exception;
 
 }

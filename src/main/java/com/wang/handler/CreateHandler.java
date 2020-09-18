@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.wang.etcd.*;
 import com.wang.service.EtcdService;
 
 import javax.annotation.Resource;
@@ -74,6 +73,11 @@ public class CreateHandler extends BaseHttpHandler{
 
         Integer nodeId = getNodeId();
         etcdService.putUeidAndStmsiAndNodeIdIntoEtcd(ueid, s_tmsi, nodeId);
+    }
+
+    @Override
+    protected Integer doHandlePost(Map<String, String> parameters) throws Exception {
+        return null;
     }
 
     /**

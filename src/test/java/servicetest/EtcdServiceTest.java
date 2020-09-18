@@ -130,4 +130,15 @@ public class EtcdServiceTest {
         Assert.assertNull(res1);
         Assert.assertNull(res2);
     }
+
+    @Test
+    public void TestPutNodeIdIntoEtcd() throws Exception{
+        int nodeId = 100;
+        String res1 = etcdService.getValueFromEtcdByKey(EtcdConfig.NodeTable + Integer.toString(nodeId));
+        Assert.assertNull(res1);
+
+        etcdService.putNodeIdIntoEtcd(nodeId);
+        res1 = etcdService.getValueFromEtcdByKey(EtcdConfig.NodeTable + Integer.toString(nodeId));
+        Assert.assertNotNull(res1);
+    }
 }

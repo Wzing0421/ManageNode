@@ -2,6 +2,7 @@ com/wang/server/httpServer.class
 com/wang/handler/CreateHandler.class
 com/wang/handler/DeleteHandler.class
 com/wang/etcd/EtcdUtil.class
+com/wang/handler/NodeRegisterHandler.class
 com/wang/etcd/EtcdConfig.class
 com/wang/Main.class
 com/wang/task/EtcdTask.class
