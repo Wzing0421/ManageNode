@@ -71,15 +71,11 @@ public class EtcdUtil {
     public static List<KeyValue> getEtcdKeyValueByKeyPrefix(String prefix) throws Exception {
         GetOption getOption = GetOption.newBuilder().withPrefix(ByteSequence.from(prefix, UTF_8)).build();
         List<KeyValue> kvsList = etcdClient.getKVClient().get(ByteSequence.from(prefix, UTF_8), getOption).get().getKvs();
-        for(KeyValue kv : kvsList){
-            System.out.println(kv.getValue().toString(UTF_8));
-        }
         return kvsList;
     }
 
     public static Long getEtcdKeyCountByKeyPrefix(String prefix) throws Exception {
         GetOption getOption = GetOption.newBuilder().withPrefix(ByteSequence.from(prefix, UTF_8)).withCountOnly(true).build();
-        GetResponse Long = etcdClient.getKVClient().get(ByteSequence.from(prefix, UTF_8), getOption).get();
         return etcdClient.getKVClient().get(ByteSequence.from(prefix, UTF_8), getOption).get().getCount();
     }
 

@@ -3,8 +3,10 @@ package com.wang.handler;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.wang.etcd.EtcdUtil;
+import com.wang.service.EtcdService;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -13,6 +15,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 @Component
 public class DeleteHandler extends BaseHttpHandler {
+
+    @Resource
+    private EtcdService etcdService;
 
     /**
      * 获取请求头
@@ -61,7 +66,7 @@ public class DeleteHandler extends BaseHttpHandler {
     @Override
     protected void doHandlePut(Map<String, String> parameters) throws Exception{
         String ueid = parameters.get("ueid");
-        EtcdUtil.getEtcdClient();
-        EtcdUtil.deleteEtcdValueByKey(ueid);
+        String stmsi = parameters.get("s_tmsi");
+        etcdService.deleteUeidAndStmsiFromEtcd(ueid, stmsi);
     }
 }

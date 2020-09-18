@@ -11,10 +11,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.wang.etcd.*;
+import com.wang.service.EtcdService;
+
+import javax.annotation.Resource;
 
 @Component
 public class CreateHandler extends BaseHttpHandler{
 
+    @Resource
+    private EtcdService etcdService;
     /**
      * 获取请求头
      *
@@ -66,7 +71,16 @@ public class CreateHandler extends BaseHttpHandler{
     protected void doHandlePut(Map<String, String> parameters) throws Exception {
         String ueid = parameters.get("ueid");
         String s_tmsi = parameters.get("s_tmsi");
-        EtcdUtil.getEtcdClient();
-        EtcdUtil.putEtcdValueByKey(ueid, s_tmsi);
+
+        Integer nodeId = getNodeId();
+        etcdService.putUeidAndStmsiAndNodeIdIntoEtcd(ueid, s_tmsi, nodeId);
+    }
+
+    /**
+     * allocate a node id for one call
+     * @return
+     */
+    private Integer getNodeId(){
+        return 1;
     }
 }
