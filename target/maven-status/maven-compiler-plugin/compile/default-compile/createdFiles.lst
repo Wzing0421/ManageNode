@@ -1,3 +1,4 @@
+com/wang/enumstatus/EnumHttpStatus.class
 com/wang/server/httpServer.class
 com/wang/handler/CreateHandler.class
 com/wang/handler/DeleteHandler.class

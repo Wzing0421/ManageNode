@@ -2,6 +2,9 @@ package com.wang.handler;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+import com.wang.enumstatus.EnumHttpStatus;
+import com.wang.task.EtcdTask;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -9,16 +12,29 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.Random;
 
 import com.wang.service.EtcdService;
 
 import javax.annotation.Resource;
 
 @Component
-public class CreateHandler extends BaseHttpHandler{
+public class CreateHandler extends BaseHttpHandler implements InitializingBean {
 
     @Resource
     private EtcdService etcdService;
+
+    @Resource
+    private EtcdTask etcdTask;
+
+    private Random ra;
+
+    /**
+     * 对于获取到的一个nodeId 查找他对应的callCount
+     * 如果重试次数 >= 3则返回资源不足。
+     */
+    private final int RetryTimes = 3;
+
     /**
      * 获取请求头
      *
@@ -65,14 +81,25 @@ public class CreateHandler extends BaseHttpHandler{
      * insert method for put
      * @param parameters
      * @throws Exception
+     * @return
      */
     @Override
-    protected void doHandlePut(Map<String, String> parameters) throws Exception {
+    protected EnumHttpStatus doHandlePut(Map<String, String> parameters) throws Exception {
         String ueid = parameters.get("ueid");
         String s_tmsi = parameters.get("s_tmsi");
 
-        Integer nodeId = getNodeId();
-        etcdService.putUeidAndStmsiAndNodeIdIntoEtcd(ueid, s_tmsi, nodeId);
+        for(int i = 0; i < RetryTimes; i++){
+            Integer nodeId = getNodeId();
+            Long callCount = etcdService.getCallCountFromEtcdByNodeId(nodeId);
+            if(callCount < 200){
+                etcdService.putUeidAndStmsiAndNodeIdIntoEtcd(ueid, s_tmsi, nodeId);
+                System.out.println(nodeId);
+                System.out.println(callCount);
+                return EnumHttpStatus.AVAILABLE;
+            }
+        }
+        return EnumHttpStatus.RESOURCENOTENOUGH;
+
     }
 
     @Override
@@ -82,9 +109,17 @@ public class CreateHandler extends BaseHttpHandler{
 
     /**
      * allocate a node id for one call
+     * random one index
      * @return
      */
     private Integer getNodeId(){
-        return 1;
+        List<Integer> nodeList = etcdTask.getNodeList();
+        Integer index = ra.nextInt(nodeList.size());
+        return  nodeList.get(index);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        ra = new Random();
     }
 }

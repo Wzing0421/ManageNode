@@ -2,14 +2,13 @@ package com.wang.handler;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import com.wang.etcd.EtcdUtil;
+import com.wang.enumstatus.EnumHttpStatus;
 import com.wang.service.EtcdService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -64,10 +63,11 @@ public class DeleteHandler extends BaseHttpHandler {
      * @throws Exception
      */
     @Override
-    protected void doHandlePut(Map<String, String> parameters) throws Exception{
+    protected EnumHttpStatus doHandlePut(Map<String, String> parameters) throws Exception{
         String ueid = parameters.get("ueid");
         String stmsi = parameters.get("s_tmsi");
         etcdService.deleteUeidAndStmsiFromEtcd(ueid, stmsi);
+        return EnumHttpStatus.DELETESUCCESS;
     }
 
     @Override

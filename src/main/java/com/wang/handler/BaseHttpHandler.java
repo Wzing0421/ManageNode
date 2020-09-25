@@ -2,6 +2,7 @@ package com.wang.handler;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import com.wang.enumstatus.EnumHttpStatus;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -56,11 +57,8 @@ public abstract class BaseHttpHandler implements HttpHandler {
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
         }
-        doHandlePut(parameters);
-        String responseText = "success";
-        //responseCode 是状态码
-        int responseCode = 200;
-        handleResponse(httpExchange, responseText.toString(), responseCode);
+        EnumHttpStatus enumHttpStatus = doHandlePut(parameters);
+        handleResponse(httpExchange, enumHttpStatus.getDescription(), enumHttpStatus.getStatus());
     }
 
 
@@ -140,7 +138,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
         out.close();
     }
 
-    abstract protected void doHandlePut(Map<String, String> parameters) throws Exception;
+    abstract protected EnumHttpStatus doHandlePut(Map<String, String> parameters) throws Exception;
 
     abstract protected Integer doHandlePost(Map<String, String> parameters) throws Exception;
 

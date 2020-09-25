@@ -1,10 +1,10 @@
 package com.wang.handler;
 
+import com.wang.enumstatus.EnumHttpStatus;
 import com.wang.service.EtcdService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -14,8 +14,8 @@ public class NodeRegisterHandler extends BaseHttpHandler{
     private EtcdService etcdService;
 
     @Override
-    protected void doHandlePut(Map<String, String> parameters) throws Exception {
-        return;
+    protected EnumHttpStatus doHandlePut(Map<String, String> parameters) throws Exception {
+        return null;
     }
 
     /**
