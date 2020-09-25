@@ -2,6 +2,7 @@
 /home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/handler/CreateHandler.java
 /home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/handler/NodeRegisterHandler.java
 /home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/handler/DeleteHandler.java
+/home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/enumstatus/EnumHttpStatus.java
 /home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/etcd/EtcdConfig.java
 /home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/server/httpServer.java
 /home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/etcd/EtcdUtil.java
