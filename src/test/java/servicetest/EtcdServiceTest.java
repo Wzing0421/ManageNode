@@ -141,4 +141,15 @@ public class EtcdServiceTest {
         res1 = etcdService.getValueFromEtcdByKey(EtcdConfig.NodeTable + Integer.toString(nodeId));
         Assert.assertNotNull(res1);
     }
+
+    @Test
+    public void TestDeleteNodeIdTableFromEtcd() throws Exception{
+        int nodeId = 100;
+        String res = etcdService.getValueFromEtcdByKey(EtcdConfig.NodeTable + Integer.toString(nodeId));
+        Assert.assertNotNull(res);
+
+        etcdService.deleteNodeIdTableFromEtcd(nodeId);
+        res = etcdService.getValueFromEtcdByKey(EtcdConfig.NodeTable + Integer.toString(nodeId));
+        Assert.assertNull(res);
+    }
 }

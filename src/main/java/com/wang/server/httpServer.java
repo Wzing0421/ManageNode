@@ -1,8 +1,10 @@
 package com.wang.server;
 
+import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import com.wang.handler.CreateHandler;
 import com.wang.handler.DeleteHandler;
+import com.wang.handler.HeartBeatHandler;
 import com.wang.handler.NodeRegisterHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,9 @@ public class httpServer {
     @Autowired
     private NodeRegisterHandler nodeRegisterHandler;
 
+    @Autowired
+    private HeartBeatHandler heartBeatHandler;
+
     public void run() throws IOException{
         HttpServer createServer = HttpServer.create(new InetSocketAddress(8080), 0);
         createServer.createContext("/ManageNodeServer/Call/create", createHandler);
@@ -33,5 +38,9 @@ public class httpServer {
         HttpServer registerServer = HttpServer.create(new InetSocketAddress(8082), 0);
         registerServer.createContext("/ManageNodeServer/Register", nodeRegisterHandler);
         registerServer.start();
+
+        HttpServer heartBeatServer = HttpServer.create(new InetSocketAddress(8083), 0);
+        heartBeatServer.createContext("/ManageNodeServer/HeartBeat", heartBeatHandler);
+        heartBeatServer.start();
     }
 }

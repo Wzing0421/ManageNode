@@ -1,11 +1,12 @@
-com/wang/enumstatus/EnumHttpStatus.class
-com/wang/server/httpServer.class
 com/wang/handler/CreateHandler.class
 com/wang/handler/DeleteHandler.class
 com/wang/etcd/EtcdUtil.class
 com/wang/handler/NodeRegisterHandler.class
+com/wang/handler/HeartBeatHandler.class
 com/wang/etcd/EtcdConfig.class
-com/wang/Main.class
 com/wang/task/EtcdTask.class
 com/wang/handler/BaseHttpHandler.class
 com/wang/service/EtcdService.class
+com/wang/enumstatus/EnumHttpStatus.class
+com/wang/server/httpServer.class
+com/wang/Main.class

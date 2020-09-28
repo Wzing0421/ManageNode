@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static com.google.common.base.Charsets.UTF_8;
 
@@ -162,5 +163,15 @@ public class EtcdService {
             return null;
         }
         return Integer.parseInt(valueStr.substring(index + EtcdConfig.NodeId.length() + 1));
+    }
+
+    /**
+     * when a nodeId are scanned for timeout, delete nodeId table  from etcd
+     * @param nodeId
+     */
+    public void deleteNodeIdTableFromEtcd(Integer nodeId) throws Exception {
+        EtcdUtil.getEtcdClient();
+        String keyStr = EtcdConfig.NodeTable + Integer.toString(nodeId);
+        EtcdUtil.deleteEtcdValueByKey(keyStr);
     }
 }

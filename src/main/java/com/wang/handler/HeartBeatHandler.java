@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class NodeRegisterHandler extends BaseHttpHandler{
-    @Resource
-    private EtcdService etcdService;
+public class HeartBeatHandler extends BaseHttpHandler{
 
     @Resource
     private EtcdTask etcdTask;
@@ -23,26 +21,17 @@ public class NodeRegisterHandler extends BaseHttpHandler{
     }
 
     /**
-     * allocate a nodeId to the encoding node
+     * 此http接口处理node 节点的心跳信息
+     * 心跳信息默认每5s更新一次
      * @param parameters
      * @return
      * @throws Exception
      */
     @Override
     protected Integer doHandlePost(Map<String, String> parameters) throws Exception {
-        List<Integer> nodeList = etcdService.getAllNodesFromEtcd();
-        Integer nodeId = getAvailableNodeId(nodeList);
-        etcdService.putNodeIdIntoEtcd(nodeId);
+        String NodeIdStr = parameters.get("NodeId");
+        Integer nodeId = Integer.valueOf(NodeIdStr);
         etcdTask.updateTimestampByNodeId(nodeId);
         return nodeId;
     }
-
-    private Integer getAvailableNodeId(List<Integer> nodeList){
-        int nodeId = 0;
-        for(int i = 0; i < nodeList.size(); i++){
-            if(i + 1 != nodeList.get(i)) return i + 1;
-        }
-        return nodeList.size() + 1;
-    }
-
 }

@@ -5,6 +5,7 @@ public enum EnumHttpStatus {
     /**
      * 200状态码标识成功
      * 410状态码标识当前无可用资源
+     * 主动拒绝还没加上去
      */
     AVAILABLE(200, "nodeId available"),
     RESOURCENOTENOUGH(410, "resource not enough"),

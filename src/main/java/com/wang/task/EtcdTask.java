@@ -6,13 +6,17 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class EtcdTask {
 
     private final List<Integer> nodeList = new ArrayList<>();
 
+    //这个map记录了每一个node节点上一次心跳的时间戳。方便定时扫描的时候扫描出挂掉的节点
+    private final ConcurrentHashMap<Integer, Date> NodeLastHeartBeatMap = new ConcurrentHashMap<>();
     @Resource
     private EtcdService etcdService;
     /**
@@ -34,7 +38,36 @@ public class EtcdTask {
         }
     }
 
+    /**
+     * scan the map every 12 seconds
+     * heart beat frequency is 5s/times.
+     * If current_time - timestamp >= 12 it means node down, so delete it
+     */
+    @Scheduled(initialDelay = 1000, fixedDelay = 1000 * 12)
+    public void scanNodeTimeout() throws Exception{
+        long millisecond1 = new Date().getTime();
+        List<Integer> timeoutNodeList = new ArrayList<>();
+        for(Integer key : NodeLastHeartBeatMap.keySet()){
+            if( ((millisecond1 - NodeLastHeartBeatMap.get(key).getTime()) / 1000) >= 12){
+                timeoutNodeList.add(key);
+            }
+        }
+        // 目前逻辑是删除 node table上面的nodeId节点
+        for(Integer nodeId : timeoutNodeList){
+            System.out.println("nodeId: " + Integer.toString(nodeId) + " timeout!!");
+            NodeLastHeartBeatMap.remove(nodeId);
+            etcdService.deleteNodeIdTableFromEtcd(nodeId);
+        }
+    }
+
     public List<Integer> getNodeList(){
         return this.nodeList;
     }
+
+    public void updateTimestampByNodeId(Integer nodeId){
+        NodeLastHeartBeatMap.put(nodeId, new Date());
+    }
+
+
+
 }
