@@ -2,9 +2,10 @@ package com.wang.etcd;
 
 public class EtcdConfig {
 
-    public static final String IP = "http://162.105.85.184";
+    //not used
+    public static final String IP = "http://192.168.100.15";
 
-    public static final String port = "2379";
+    public static final String port = "2479";
 
     /**
      * prefix for table: nodeId -> ueid

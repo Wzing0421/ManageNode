@@ -9,18 +9,17 @@ import io.etcd.jetcd.options.GetOption;
 import io.etcd.jetcd.watch.WatchEvent;
 import org.springframework.stereotype.Component;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @Component
 public class EtcdUtil {
-
-    private static String IPPort = null;
-    static {
-        IPPort = EtcdConfig.IP + ':' + EtcdConfig.port;
-    }
-
     
     public static Client etcdClient = null;
 
@@ -28,10 +27,23 @@ public class EtcdUtil {
      * get a connected etcd client
      * @return
      */
-    public static Client getEtcdClient(){
+    public static Client getEtcdClient() throws IOException {
         if(etcdClient == null){
             synchronized (EtcdUtil.class) {
-                etcdClient = Client.builder().endpoints(IPPort).build();
+                Properties properties = new Properties();
+                InputStream inputStream = null;
+                try{
+                    properties.load((new FileInputStream("res/Config.properties")));
+                }
+                catch (FileNotFoundException e){
+                    e.printStackTrace();
+                }
+                catch (IOException e){
+                    e.printStackTrace();
+                }
+                String ip = properties.getProperty("ETCDIp");
+                String port = properties.getProperty("ETCDPort");
+                etcdClient = Client.builder().endpoints(ip+':'+port).build();
             }
         }
         return etcdClient;
