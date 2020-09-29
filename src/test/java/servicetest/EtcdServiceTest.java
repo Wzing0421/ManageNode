@@ -30,8 +30,15 @@ public class EtcdServiceTest {
         List<Integer> list1 = new ArrayList<Integer>();
         list1.add(1);
         list1.add(2);
+        list1.add(3);
         list1.add(4);
         list1.add(5);
+        list1.add(6);
+        list1.add(7);
+        list1.add(8);
+        list1.add(9);
+        list1.add(10);
+        list1.add(11);
         List<Integer> kvList = etcdService.getAllNodesFromEtcd();
         Assert.assertEquals(list1, kvList);
     }
@@ -43,17 +50,17 @@ public class EtcdServiceTest {
         Long res1 = etcdService.getCallCountFromEtcdByNodeId(1);
         Assert.assertEquals(res, res1);
 
-        num = 5;
+        num = 8;
         res = num.longValue();
         res1 = etcdService.getCallCountFromEtcdByNodeId(2);
         Assert.assertEquals(res, res1);
 
-        num = 0;
+        num = 3;
         res = num.longValue();
         res1 = etcdService.getCallCountFromEtcdByNodeId(3);
         Assert.assertEquals(res, res1);
 
-        num = 2;
+        num = 3;
         res = num.longValue();
         res1 = etcdService.getCallCountFromEtcdByNodeId(4);
         Assert.assertEquals(res, res1);
@@ -98,14 +105,10 @@ public class EtcdServiceTest {
 
         String keyStr1 = EtcdConfig.UeidInfo + ueid;
         String keyStr2 = EtcdConfig.NodeUeId + Integer.toString(nodeid) + "_" + ueid;
-        String valueStr1 = etcdService.getValueFromEtcdByKey(keyStr1);
-        String valueStr2 = etcdService.getValueFromEtcdByKey(keyStr2);
-        Assert.assertNull(valueStr1);
-        Assert.assertNull(valueStr2);
 
         etcdService.putUeidAndStmsiAndNodeIdIntoEtcd(ueid, stmsi, nodeid);
-        valueStr1 = etcdService.getValueFromEtcdByKey(keyStr1);
-        valueStr2 = etcdService.getValueFromEtcdByKey(keyStr2);
+        String valueStr1 = etcdService.getValueFromEtcdByKey(keyStr1);
+        String valueStr2 = etcdService.getValueFromEtcdByKey(keyStr2);
         String testValue1 = "STMSI_" + stmsi + "_NODEID_" + Integer.toString(nodeid);
         String testValue2 = "1";
         Assert.assertEquals(testValue1, valueStr1);
@@ -114,9 +117,9 @@ public class EtcdServiceTest {
 
     @Test
     public void TestDeleteUeidAndStmsiFromEtcd() throws Exception{
-        String ueid = "1234567";
+        String ueid = "654321";
         int nodeid = 2;
-        String stmsi = "abcefg";
+        String stmsi = "abcvds";
 
         etcdService.putUeidAndStmsiAndNodeIdIntoEtcd(ueid, stmsi, nodeid);
         String res1 = etcdService.getValueFromEtcdByKey(EtcdConfig.UeidInfo + ueid);
