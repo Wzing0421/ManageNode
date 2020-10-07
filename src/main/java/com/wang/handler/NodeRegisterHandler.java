@@ -1,6 +1,7 @@
 package com.wang.handler;
 
 import com.wang.enumstatus.EnumHttpStatus;
+import com.wang.etcd.EtcdConfig;
 import com.wang.service.EtcdService;
 import com.wang.task.EtcdTask;
 import org.springframework.stereotype.Component;
@@ -30,9 +31,19 @@ public class NodeRegisterHandler extends BaseHttpHandler{
      */
     @Override
     protected Integer doHandlePost(Map<String, String> parameters) throws Exception {
+        if(parameters.get("RemoteNodeIp") == null){
+            System.out.println("No Node Ip from request!");
+            return null;
+        }
         List<Integer> nodeList = etcdService.getAllNodesFromEtcd();
         Integer nodeId = getAvailableNodeId(nodeList);
         etcdService.putNodeIdIntoEtcd(nodeId);
+
+        //把NodeID 和其对应的NodeIP 也插入表中
+        String keyStr = EtcdConfig.NodeId + Integer.toString(nodeId);
+        String valueStr = EtcdConfig.NodeIp + parameters.get("RemoteNodeIp");
+        etcdService.putNodeIdAndNodeIpIntoEtcd(keyStr, valueStr);
+
         etcdTask.updateTimestampByNodeId(nodeId);
         return nodeId;
     }

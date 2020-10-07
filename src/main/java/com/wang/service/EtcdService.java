@@ -174,4 +174,15 @@ public class EtcdService {
         String keyStr = EtcdConfig.NodeTable + Integer.toString(nodeId);
         EtcdUtil.deleteEtcdValueByKey(keyStr);
     }
+
+    public void putNodeIdAndNodeIpIntoEtcd(String key, String value) throws Exception{
+        EtcdUtil.getEtcdClient();
+        EtcdUtil.putEtcdValueByKey(key, value);
+    }
+
+    public void deleteNodeIdAndNodeIpFromEtcd(Integer nodeId) throws Exception {
+        EtcdUtil.getEtcdClient();
+        String keyStr = EtcdConfig.NodeId + Integer.toString(nodeId);
+        EtcdUtil.deleteEtcdValueByKey(keyStr);
+    }
 }

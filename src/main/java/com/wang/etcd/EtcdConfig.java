@@ -31,4 +31,9 @@ public class EtcdConfig {
      * prefix for node id
      */
     public static final String NodeId = "NODEID_";
+
+    /**
+     * prefix for node Ip
+     */
+    public static final String NodeIp = "NODEIP_";
 }

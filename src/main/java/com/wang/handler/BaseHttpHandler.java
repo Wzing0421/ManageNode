@@ -7,6 +7,7 @@ import com.wang.enumstatus.EnumHttpStatus;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.util.HashMap;
@@ -103,6 +104,10 @@ public abstract class BaseHttpHandler implements HttpHandler {
     private Map<String, String> parsePostParameters(HttpExchange exchange)
             throws UnsupportedEncodingException{
         Map<String, String> parameters = new HashMap<String, String>();
+        //获取请求方的IP
+        String RemoteNodeAddr = exchange.getRemoteAddress().getHostString();
+        //System.out.println(RemoteNodeAddr);
+        parameters.put("RemoteNodeIp", RemoteNodeAddr);
         URI requestedUri = exchange.getRequestURI();
         String query = requestedUri.getRawQuery();
         parseQuery(query, parameters);

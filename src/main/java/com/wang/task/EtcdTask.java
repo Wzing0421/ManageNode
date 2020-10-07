@@ -52,11 +52,12 @@ public class EtcdTask {
                 timeoutNodeList.add(key);
             }
         }
-        // 目前逻辑是删除 node table上面的nodeId节点
+        // 目前逻辑是删除 node table上面的nodeId节点, 以及对应的NodeId表上面的IP
         for(Integer nodeId : timeoutNodeList){
             System.out.println("nodeId: " + Integer.toString(nodeId) + " timeout!!");
             NodeLastHeartBeatMap.remove(nodeId);
             etcdService.deleteNodeIdTableFromEtcd(nodeId);
+            etcdService.deleteNodeIdAndNodeIpFromEtcd(nodeId);
         }
     }
 

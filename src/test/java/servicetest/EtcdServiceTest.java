@@ -160,5 +160,15 @@ public class EtcdServiceTest {
         etcdService.deleteNodeIdTableFromEtcd(nodeId);
         res = etcdService.getValueFromEtcdByKey(EtcdConfig.NodeTable + Integer.toString(nodeId));
         Assert.assertNull(res);
+    }
+
+    @Test
+    public void TestPutNodeIdAndNodeIpIntoEtcd() throws Exception{
+
+        String key = "NODEID_3";
+        String value = "NODEIP_162.105.85.184";
+        etcdService.putNodeIdAndNodeIpIntoEtcd(key, value);
+        String res = etcdService.getValueFromEtcdByKey("NODEID_3");
+        Assert.assertNotNull(res);
     }*/
 }
