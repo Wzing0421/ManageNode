@@ -29,8 +29,14 @@ public class httpServer {
     public void run() throws IOException{
         HttpServer createServer = HttpServer.create(new InetSocketAddress(8080), 0);
         createServer.createContext("/ManageNodeServer/Call/create", createHandler);
+
+
+        createServer.createContext("/ManageNodeServer/Call/delete", deleteHandler);
+        createServer.createContext("/ManageNodeServer/Register", nodeRegisterHandler);
+        createServer.createContext("/ManageNodeServer/HeartBeat", heartBeatHandler);
         createServer.start();
 
+        /*
         HttpServer deleteServer = HttpServer.create(new InetSocketAddress(8081), 0);
         deleteServer.createContext("/ManageNodeServer/Call/delete", deleteHandler);
         deleteServer.start();
@@ -41,6 +47,7 @@ public class httpServer {
 
         HttpServer heartBeatServer = HttpServer.create(new InetSocketAddress(8083), 0);
         heartBeatServer.createContext("/ManageNodeServer/HeartBeat", heartBeatHandler);
-        heartBeatServer.start();
+        heartBeatServer.start();*/
+
     }
 }

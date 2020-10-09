@@ -1,12 +1,11 @@
 package com.wang.handler;
 
+import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.wang.enumstatus.EnumHttpStatus;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -43,6 +42,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
     }
 
     private void handlePost(HttpExchange httpExchange) throws Exception{
+
         Map<String, String> parameters = parsePostParameters(httpExchange);
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
@@ -102,7 +102,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
     }
 
     private Map<String, String> parsePostParameters(HttpExchange exchange)
-            throws UnsupportedEncodingException{
+            throws IOException {
         Map<String, String> parameters = new HashMap<String, String>();
         //获取请求方的IP
         String RemoteNodeAddr = exchange.getRemoteAddress().getHostString();
@@ -110,8 +110,45 @@ public abstract class BaseHttpHandler implements HttpHandler {
         parameters.put("RemoteNodeIp", RemoteNodeAddr);
         URI requestedUri = exchange.getRequestURI();
         String query = requestedUri.getRawQuery();
+        parsePostData(exchange, parameters);
         parseQuery(query, parameters);
         return parameters;
+    }
+
+    /**
+     * 对于post的Data的解析，存放于parameters中
+     * @param exchange
+     * @param parameters
+     * @throws IOException
+     */
+    private void parsePostData(HttpExchange exchange, Map<String, String> parameters ) throws IOException {
+        InputStreamReader isr = new InputStreamReader(exchange.getRequestBody(), "utf-8");
+        BufferedReader br = new BufferedReader(isr);
+
+        int b;
+        StringBuilder buf = new StringBuilder();
+        while ((b = br.read()) != -1) {
+            buf.append((char) b);
+        }
+        br.close();
+        isr.close();
+        String s = buf.toString();
+        if(s.length() <= 2) return;
+        //截取字符串，去除前后的{}
+        if(s.charAt(0) == '{'){
+            s = s.substring(1);
+        }
+        if(s.charAt(s.length() - 1) == '}'){
+            s = s.substring(0, s.length() - 1);
+        }
+        String[] strs = s.split("&");
+        for(int i = 0; i < strs.length; i++){
+            String[] rec = strs[i].split("=");
+            if(rec.length <= 1) continue;
+            parameters.put(rec[0], rec[1]);
+            System.out.println(rec[0]);
+            System.out.println(rec[1]);
+        }
     }
     /**
      * 处理响应
@@ -123,11 +160,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
     private void handleResponse(HttpExchange httpExchange, String responsetext, int responseCode) throws Exception {
         //生成html
         StringBuilder responseContent = new StringBuilder();
-        responseContent.append("<html>")
-                .append("<body>")
-                .append(responsetext)
-                .append("</body>")
-                .append("</html>");
+        responseContent.append(responsetext);
         String responseContentStr = responseContent.toString();
         byte[] responseContentByte = responseContentStr.getBytes("utf-8");
 
