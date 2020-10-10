@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.Random;
 
@@ -29,6 +30,7 @@ public class CreateHandler extends BaseHttpHandler implements InitializingBean {
 
     private Random ra;
 
+    private ConcurrentHashMap<String, String> UEIDSTMSIMAP = new ConcurrentHashMap<>();
     /**
      * 对于获取到的一个nodeId 查找他对应的callCount
      * 如果重试次数 >= 3则返回资源不足。
@@ -87,14 +89,19 @@ public class CreateHandler extends BaseHttpHandler implements InitializingBean {
     protected EnumHttpStatus doHandlePut(Map<String, String> parameters) throws Exception {
         String ueid = parameters.get("ueid");
         String s_tmsi = parameters.get("s_tmsi");
-
+        System.out.println("PUT ueid is: " + ueid);
+        System.out.println("PUT s_tmsi is: " + s_tmsi);
         for(int i = 0; i < RetryTimes; i++){
             Integer nodeId = getNodeId();
             Long callCount = etcdService.getCallCountFromEtcdByNodeId(nodeId);
             if(callCount < 200){
-                etcdService.putUeidAndStmsiAndNodeIdIntoEtcd(ueid, s_tmsi, nodeId);
-                System.out.println(nodeId);
-                System.out.println(callCount);
+
+                System.out.println("PUT Allocate nodeid is: " + nodeId);
+
+                //这里需要向map中插入ueid和stmsi,nodeId的对应关系，方便第二次的时候直接取出来
+                String valuestr = s_tmsi + "_" + Integer.toString(nodeId);
+                UEIDSTMSIMAP.put(ueid, valuestr);
+                //返回状态码为200
                 return EnumHttpStatus.AVAILABLE;
             }
         }
@@ -121,5 +128,19 @@ public class CreateHandler extends BaseHttpHandler implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         ra = new Random();
+    }
+
+    /**
+     * to get stmsi and nodeId from UEIDSTMSIMAP
+     * stsmi and nodeId are important for config handler
+     * @param ueid
+     * @return
+     */
+    public String getSTMSIAndNodeIdFromMap(String ueid){
+        return UEIDSTMSIMAP.get(ueid);
+    }
+
+    public void deleteSTMSIAndNodeIdByUeId(String ueid){
+        UEIDSTMSIMAP.remove(ueid);
     }
 }

@@ -45,7 +45,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
 
         Map<String, String> parameters = parsePostParameters(httpExchange);
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+            System.out.println("收到的Post请求的Key = " + entry.getKey() + ", Value = " + entry.getValue());
         }
         Integer nodeId = doHandlePost(parameters);
         //responseCode 是状态码
@@ -56,7 +56,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
     private void handlePut(HttpExchange httpExchange) throws Exception{
         Map<String, String> parameters = parsePutParameters(httpExchange);
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+            System.out.println("收到的PUT请求的Key = " + entry.getKey() + ", Value = " + entry.getValue());
         }
         EnumHttpStatus enumHttpStatus = doHandlePut(parameters);
         handleResponse(httpExchange, enumHttpStatus.getDescription(), enumHttpStatus.getStatus());
@@ -64,11 +64,12 @@ public abstract class BaseHttpHandler implements HttpHandler {
 
 
     private Map<String, String> parsePutParameters(HttpExchange exchange)
-            throws UnsupportedEncodingException {
+            throws IOException {
 
         Map<String, String> parameters = new HashMap<String, String>();
         URI requestedUri = exchange.getRequestURI();
         String query = requestedUri.getRawQuery();
+        parseData(exchange, parameters);
         parseQuery(query, parameters);
         return parameters;
     }
@@ -106,11 +107,10 @@ public abstract class BaseHttpHandler implements HttpHandler {
         Map<String, String> parameters = new HashMap<String, String>();
         //获取请求方的IP
         String RemoteNodeAddr = exchange.getRemoteAddress().getHostString();
-        //System.out.println(RemoteNodeAddr);
         parameters.put("RemoteNodeIp", RemoteNodeAddr);
         URI requestedUri = exchange.getRequestURI();
         String query = requestedUri.getRawQuery();
-        parsePostData(exchange, parameters);
+        parseData(exchange, parameters);
         parseQuery(query, parameters);
         return parameters;
     }
@@ -121,7 +121,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
      * @param parameters
      * @throws IOException
      */
-    private void parsePostData(HttpExchange exchange, Map<String, String> parameters ) throws IOException {
+    private void parseData(HttpExchange exchange, Map<String, String> parameters ) throws IOException {
         InputStreamReader isr = new InputStreamReader(exchange.getRequestBody(), "utf-8");
         BufferedReader br = new BufferedReader(isr);
 
@@ -146,8 +146,6 @@ public abstract class BaseHttpHandler implements HttpHandler {
             String[] rec = strs[i].split("=");
             if(rec.length <= 1) continue;
             parameters.put(rec[0], rec[1]);
-            System.out.println(rec[0]);
-            System.out.println(rec[1]);
         }
     }
     /**

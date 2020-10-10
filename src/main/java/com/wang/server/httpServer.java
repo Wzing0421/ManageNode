@@ -2,10 +2,7 @@ package com.wang.server;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import com.wang.handler.CreateHandler;
-import com.wang.handler.DeleteHandler;
-import com.wang.handler.HeartBeatHandler;
-import com.wang.handler.NodeRegisterHandler;
+import com.wang.handler.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,20 +18,22 @@ public class httpServer {
     private DeleteHandler deleteHandler;
 
     @Autowired
+    private ConfigHandler configHandler;
+
+    @Autowired
     private NodeRegisterHandler nodeRegisterHandler;
 
     @Autowired
     private HeartBeatHandler heartBeatHandler;
 
     public void run() throws IOException{
-        HttpServer createServer = HttpServer.create(new InetSocketAddress(8080), 0);
-        createServer.createContext("/ManageNodeServer/Call/create", createHandler);
-
-
-        createServer.createContext("/ManageNodeServer/Call/delete", deleteHandler);
-        createServer.createContext("/ManageNodeServer/Register", nodeRegisterHandler);
-        createServer.createContext("/ManageNodeServer/HeartBeat", heartBeatHandler);
-        createServer.start();
+        HttpServer Server = HttpServer.create(new InetSocketAddress(8080), 0);
+        Server.createContext("/ManageNodeServer/Call/create", createHandler);
+        Server.createContext("/ManageNodeServer/Call/config", configHandler);
+        Server.createContext("/ManageNodeServer/Call/delete", deleteHandler);
+        Server.createContext("/ManageNodeServer/Register", nodeRegisterHandler);
+        Server.createContext("/ManageNodeServer/HeartBeat", heartBeatHandler);
+        Server.start();
 
         /*
         HttpServer deleteServer = HttpServer.create(new InetSocketAddress(8081), 0);

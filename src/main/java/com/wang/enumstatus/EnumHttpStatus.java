@@ -8,8 +8,11 @@ public enum EnumHttpStatus {
      * 主动拒绝还没加上去
      */
     AVAILABLE(200, "nodeId available"),
+    SUCCESS(200, "success"),
     RESOURCENOTENOUGH(410, "resource not enough"),
-    DELETESUCCESS(200, "delete success");
+    DELETESUCCESS(200, "delete success"),
+    UEIDNOTEXIST(400, "no ueid found in the second request from signal GW"),
+    UEIDSTMSINOTMATCH(400, "ueid and stmsi not match in the first and second request from signal GW");
 
     private final int status;
 

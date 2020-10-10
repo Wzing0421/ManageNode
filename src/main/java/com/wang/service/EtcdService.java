@@ -1,5 +1,7 @@
 package com.wang.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.wang.etcd.EtcdConfig;
 import com.wang.etcd.EtcdUtil;
 import io.etcd.jetcd.KeyValue;
@@ -122,10 +124,11 @@ public class EtcdService {
         if (valueStr == null) {
             return;
         }
-        Integer nodeId = getNodeIdFromValueStr(valueStr);
+        JSONObject jsonObject = JSON.parseObject(valueStr);
+        String nodeId = (String) jsonObject.get("NODEID");
         //注意这里要删除两个表里面的数据
         EtcdUtil.deleteEtcdValueByKey(EtcdConfig.UeidInfo + ueid);
-        EtcdUtil.deleteEtcdValueByKey(EtcdConfig.NodeUeId + Integer.toString(nodeId) + "_" + ueid);
+        EtcdUtil.deleteEtcdValueByKey(EtcdConfig.NodeUeId + nodeId + "_" + ueid);
     }
 
     /**
@@ -145,6 +148,13 @@ public class EtcdService {
         String keyStr2 = EtcdConfig.NodeUeId + Integer.toString(nodeId) + "_" + ueid;
         String valueStr2 = "1";
         EtcdUtil.putEtcdValueByKey(keyStr1, valueStr1);
+        EtcdUtil.putEtcdValueByKey(keyStr2, valueStr2);
+    }
+
+    public void putNodeIdANdUeIdIntoEtcd(Integer nodeId, String ueid) throws Exception {
+        EtcdUtil.getEtcdClient();
+        String keyStr2 = EtcdConfig.NodeUeId + Integer.toString(nodeId) + "_" + ueid;
+        String valueStr2 = "1";
         EtcdUtil.putEtcdValueByKey(keyStr2, valueStr2);
     }
 
@@ -184,5 +194,10 @@ public class EtcdService {
         EtcdUtil.getEtcdClient();
         String keyStr = EtcdConfig.NodeId + Integer.toString(nodeId);
         EtcdUtil.deleteEtcdValueByKey(keyStr);
+    }
+
+    public void putUeidAndStmsiNodeIdUeIpImsIp(String key, String value) throws Exception{
+        EtcdUtil.getEtcdClient();
+        EtcdUtil.putEtcdValueByKey(key, value);
     }
 }
