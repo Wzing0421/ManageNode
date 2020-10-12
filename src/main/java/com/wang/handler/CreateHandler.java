@@ -93,10 +93,16 @@ public class CreateHandler extends BaseHttpHandler implements InitializingBean {
         System.out.println("PUT s_tmsi is: " + s_tmsi);
         for(int i = 0; i < RetryTimes; i++){
             Integer nodeId = getNodeId();
+
+            //返回-1表示当前没有编码节点资源可用
+            if(nodeId == -1){
+                System.out.println("[Error] Create Handler: node count is 0!");
+                return EnumHttpStatus.RESOURCENOTENOUGH;
+            }
             Long callCount = etcdService.getCallCountFromEtcdByNodeId(nodeId);
             if(callCount < 200){
 
-                System.out.println("PUT Allocate nodeid is: " + nodeId);
+                System.out.println("[Info] Create Handler: Allocate nodeid is: " + nodeId);
 
                 //这里需要向map中插入ueid和stmsi,nodeId的对应关系，方便第二次的时候直接取出来
                 String valuestr = s_tmsi + "_" + Integer.toString(nodeId);
@@ -121,6 +127,7 @@ public class CreateHandler extends BaseHttpHandler implements InitializingBean {
      */
     private Integer getNodeId(){
         List<Integer> nodeList = etcdTask.getNodeList();
+        if(nodeList == null || nodeList.size() == 0) return -1;
         Integer index = ra.nextInt(nodeList.size());
         return  nodeList.get(index);
     }

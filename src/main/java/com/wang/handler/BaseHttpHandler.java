@@ -44,9 +44,9 @@ public abstract class BaseHttpHandler implements HttpHandler {
     private void handlePost(HttpExchange httpExchange) throws Exception{
 
         Map<String, String> parameters = parsePostParameters(httpExchange);
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+        /*for (Map.Entry<String, String> entry : parameters.entrySet()) {
             System.out.println("收到的Post请求的Key = " + entry.getKey() + ", Value = " + entry.getValue());
-        }
+        }*/
         Integer nodeId = doHandlePost(parameters);
         //responseCode 是状态码
         int responseCode = 200;
@@ -55,9 +55,9 @@ public abstract class BaseHttpHandler implements HttpHandler {
 
     private void handlePut(HttpExchange httpExchange) throws Exception{
         Map<String, String> parameters = parsePutParameters(httpExchange);
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+        /*for (Map.Entry<String, String> entry : parameters.entrySet()) {
             System.out.println("收到的PUT请求的Key = " + entry.getKey() + ", Value = " + entry.getValue());
-        }
+        }*/
         EnumHttpStatus enumHttpStatus = doHandlePut(parameters);
         handleResponse(httpExchange, enumHttpStatus.getDescription(), enumHttpStatus.getStatus());
     }

@@ -12,7 +12,8 @@ public enum EnumHttpStatus {
     RESOURCENOTENOUGH(410, "resource not enough"),
     DELETESUCCESS(200, "delete success"),
     UEIDNOTEXIST(400, "no ueid found in the second request from signal GW"),
-    UEIDSTMSINOTMATCH(400, "ueid and stmsi not match in the first and second request from signal GW");
+    UEIDSTMSINOTMATCH(400, "ueid and stmsi not match in the first and second request from signal GW"),
+    NULLPARAM(400, "null parameter from signal GW");
 
     private final int status;
 

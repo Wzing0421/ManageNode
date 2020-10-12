@@ -48,12 +48,34 @@ public class ConfigHandler extends BaseHttpHandler{
 
         //3. 将ueid对应的 stmsi, nodeId, ueip和imsip存放为json
         String ueip = parameters.get("ueip");
+        String ueport = parameters.get("ueport");
         String imsip = parameters.get("imsip");
+        String imsport = parameters.get("imsport");
+
+        if(ueip == null){
+            System.out.println("[Error] Config Handler: get null ueip");
+            return EnumHttpStatus.NULLPARAM;
+        }
+        if(ueport == null){
+            System.out.println("[Error] Config Handler: get null ueport");
+            return EnumHttpStatus.NULLPARAM;
+        }
+        if(imsip == null){
+            System.out.println("[Error] Config Handler: get null imsip");
+            return EnumHttpStatus.NULLPARAM;
+        }
+        if(imsport == null){
+            System.out.println("[Error] Config Handler: get null imsport");
+            return EnumHttpStatus.NULLPARAM;
+        }
+
         JSONObject object = new JSONObject();
         object.put("STMSI", s_tmsi);
         object.put("NODEID", Integer.toString(nodeId));
         object.put("UEIP", ueip);
+        object.put("UEPORT", ueport);
         object.put("IMSIP", imsip);
+        object.put("IMSPORT", imsport);
 
         //4. 在map缓存中删除这个表项
         createHandler.deleteSTMSIAndNodeIdByUeId(ueid);

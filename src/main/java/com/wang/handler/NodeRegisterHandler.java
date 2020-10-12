@@ -32,7 +32,7 @@ public class NodeRegisterHandler extends BaseHttpHandler{
     @Override
     protected Integer doHandlePost(Map<String, String> parameters) throws Exception {
         if(parameters.get("RemoteNodeIp") == null){
-            System.out.println("No Node Ip from request!");
+            System.out.println("[Error] NodeRegister Handler : No Node Ip from request!");
             return null;
         }
         List<Integer> nodeList = etcdService.getAllNodesFromEtcd();
