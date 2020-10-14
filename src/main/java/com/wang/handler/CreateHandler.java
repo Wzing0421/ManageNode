@@ -1,8 +1,10 @@
 package com.wang.handler;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.wang.enumstatus.EnumHttpStatus;
+import com.wang.etcd.EtcdConfig;
 import com.wang.task.EtcdTask;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
@@ -29,8 +31,6 @@ public class CreateHandler extends BaseHttpHandler implements InitializingBean {
     private EtcdTask etcdTask;
 
     private Random ra;
-
-    private ConcurrentHashMap<String, String> UEIDSTMSIMAP = new ConcurrentHashMap<>();
     /**
      * 对于获取到的一个nodeId 查找他对应的callCount
      * 如果重试次数 >= 3则返回资源不足。
@@ -87,10 +87,40 @@ public class CreateHandler extends BaseHttpHandler implements InitializingBean {
      */
     @Override
     protected EnumHttpStatus doHandlePut(Map<String, String> parameters) throws Exception {
+        // 1. 获得6个参数并且校验
         String ueid = parameters.get("ueid");
         String s_tmsi = parameters.get("s_tmsi");
-        System.out.println("PUT ueid is: " + ueid);
-        System.out.println("PUT s_tmsi is: " + s_tmsi);
+        String ueip = parameters.get("ueip");
+        String ueport = parameters.get("ueport");
+        String imsip = parameters.get("imsip");
+        String imsport = parameters.get("imsport");
+
+        if(ueid == null){
+            System.out.println("[Error] Create Handler: get null ueid");
+            return EnumHttpStatus.NULLPARAM;
+        }
+        if(s_tmsi == null){
+            System.out.println("[Error] Create Handler: get null s_tmsi");
+            return EnumHttpStatus.NULLPARAM;
+        }
+        if(ueip == null){
+            System.out.println("[Error] Create Handler: get null ueip");
+            return EnumHttpStatus.NULLPARAM;
+        }
+        if(ueport == null){
+            System.out.println("[Error] Create Handler: get null ueport");
+            return EnumHttpStatus.NULLPARAM;
+        }
+        if(imsip == null){
+            System.out.println("[Error] Create Handler: get null imsip");
+            return EnumHttpStatus.NULLPARAM;
+        }
+        if(imsport == null){
+            System.out.println("[Error] Create Handler: get null imsport");
+            return EnumHttpStatus.NULLPARAM;
+        }
+
+        //2. 获得一个空闲的节点
         for(int i = 0; i < RetryTimes; i++){
             Integer nodeId = getNodeId();
 
@@ -103,10 +133,20 @@ public class CreateHandler extends BaseHttpHandler implements InitializingBean {
             if(callCount < 200){
 
                 System.out.println("[Info] Create Handler: Allocate nodeid is: " + nodeId);
+                //3. 将所有数据写入etcd
+                JSONObject object = new JSONObject();
+                object.put("STMSI", s_tmsi);
+                object.put("NODEID", Integer.toString(nodeId));
+                object.put("UEIP", ueip);
+                object.put("UEPORT", ueport);
+                object.put("IMSIP", imsip);
+                object.put("IMSPORT", imsport);
 
-                //这里需要向map中插入ueid和stmsi,nodeId的对应关系，方便第二次的时候直接取出来
-                String valuestr = s_tmsi + "_" + Integer.toString(nodeId);
-                UEIDSTMSIMAP.put(ueid, valuestr);
+                String valueStr = object.toJSONString();
+                System.out.println("[info]Create Handler: write to etcd: key= " + ueid + " , value = " + valueStr);
+                etcdService.putUeidAndStmsiNodeIdUeIpImsIp(EtcdConfig.UeidInfo + ueid, valueStr);
+                etcdService.putNodeIdANdUeIdIntoEtcd(nodeId, ueid);
+
                 //返回状态码为200
                 return EnumHttpStatus.AVAILABLE;
             }
@@ -137,17 +177,4 @@ public class CreateHandler extends BaseHttpHandler implements InitializingBean {
         ra = new Random();
     }
 
-    /**
-     * to get stmsi and nodeId from UEIDSTMSIMAP
-     * stsmi and nodeId are important for config handler
-     * @param ueid
-     * @return
-     */
-    public String getSTMSIAndNodeIdFromMap(String ueid){
-        return UEIDSTMSIMAP.get(ueid);
-    }
-
-    public void deleteSTMSIAndNodeIdByUeId(String ueid){
-        UEIDSTMSIMAP.remove(ueid);
-    }
 }

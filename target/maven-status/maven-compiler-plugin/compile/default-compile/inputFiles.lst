@@ -1,13 +1,12 @@
 /home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/task/EtcdTask.java
+/home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/handler/CreateHandler.java
+/home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/handler/NodeRegisterHandler.java
 /home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/handler/DeleteHandler.java
 /home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/enumstatus/EnumHttpStatus.java
 /home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/etcd/EtcdConfig.java
-/home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/handler/ConfigHandler.java
-/home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/Main.java
-/home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/handler/BaseHttpHandler.java
-/home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/handler/CreateHandler.java
-/home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/handler/NodeRegisterHandler.java
 /home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/server/httpServer.java
 /home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/handler/HeartBeatHandler.java
 /home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/etcd/EtcdUtil.java
+/home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/Main.java
+/home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/handler/BaseHttpHandler.java
 /home/wzing/IdeaProjects/ManageNode/src/main/java/com/wang/service/EtcdService.java
