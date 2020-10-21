@@ -18,9 +18,6 @@ public class httpServer {
     private DeleteHandler deleteHandler;
 
     @Autowired
-    private ConfigHandler configHandler;
-
-    @Autowired
     private NodeRegisterHandler nodeRegisterHandler;
 
     @Autowired
@@ -29,7 +26,6 @@ public class httpServer {
     public void run() throws IOException{
         HttpServer Server = HttpServer.create(new InetSocketAddress(8080), 0);
         Server.createContext("/ManageNodeServer/Call/create", createHandler);
-        Server.createContext("/ManageNodeServer/Call/config", configHandler);
         Server.createContext("/ManageNodeServer/Call/delete", deleteHandler);
         Server.createContext("/ManageNodeServer/Register", nodeRegisterHandler);
         Server.createContext("/ManageNodeServer/HeartBeat", heartBeatHandler);
