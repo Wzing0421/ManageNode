@@ -87,16 +87,21 @@ public class CreateHandler extends BaseHttpHandler implements InitializingBean {
      */
     @Override
     protected EnumHttpStatus doHandlePut(Map<String, String> parameters) throws Exception {
-        // 1. 获得6个参数并且校验
-        String ueid = parameters.get("ueid");
+        // 1. 获得7个参数并且校验
+        String uplinkueid = parameters.get("uplink_ueid");
+        String downlinkueid = parameters.get("downlink_ueid");
         String s_tmsi = parameters.get("s_tmsi");
         String ueip = parameters.get("ueip");
         String ueport = parameters.get("ueport");
         String imsip = parameters.get("imsip");
         String imsport = parameters.get("imsport");
 
-        if(ueid == null){
-            System.out.println("[Error] Create Handler: get null ueid");
+        if(uplinkueid == null){
+            System.out.println("[Error] Create Handler: get null uplinkueid");
+            return EnumHttpStatus.NULLPARAM;
+        }
+        if(downlinkueid == null){
+            System.out.println("[Error] Create Handler: get null downlinkueid");
             return EnumHttpStatus.NULLPARAM;
         }
         if(s_tmsi == null){
@@ -143,9 +148,11 @@ public class CreateHandler extends BaseHttpHandler implements InitializingBean {
                 object.put("IMSPORT", imsport);
 
                 String valueStr = object.toJSONString();
-                System.out.println("[info]Create Handler: write to etcd: key= " + ueid + " , value = " + valueStr);
-                etcdService.putUeidAndStmsiNodeIdUeIpImsIp(EtcdConfig.UeidInfo + ueid, valueStr);
-                etcdService.putNodeIdANdUeIdIntoEtcd(nodeId, ueid);
+                System.out.println("[info]Create Handler: write to etcd: key= " + uplinkueid + "_" + downlinkueid + " , value = " + valueStr);
+                //上行和下行的ueid以_分割: UEID_uplinkueid_downlinkueid
+                etcdService.putUeidAndStmsiNodeIdUeIpImsIp(EtcdConfig.UeidInfo + uplinkueid + "_" + downlinkueid, valueStr);
+                etcdService.putNodeIdANdUeIdIntoEtcd(nodeId, uplinkueid);
+                etcdService.putNodeIdANdUeIdIntoEtcd(nodeId, downlinkueid);
 
                 //返回状态码为200
                 return EnumHttpStatus.AVAILABLE;

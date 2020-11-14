@@ -112,13 +112,14 @@ public class EtcdService {
      * 1. UEID_<ueid>
      * 2. NODEUEID_<nodeId>_<ueid> -> "1"
      *
-     * @param ueid
+     * @param uplinkueid
+     * @param downlinkueid
      * @param stmsi
      * @throws Exception
      */
-    public void deleteUeidAndStmsiFromEtcd(String ueid, String stmsi) throws Exception {
+    public void deleteUeidAndStmsiFromEtcd(String uplinkueid, String downlinkueid, String stmsi) throws Exception {
         EtcdUtil.getEtcdClient();
-        String keyStr = EtcdConfig.UeidInfo + ueid;
+        String keyStr = EtcdConfig.UeidInfo + uplinkueid + "_" + downlinkueid;
         String valueStr = EtcdUtil.getEtcdValueByKey(keyStr);
         //这种是当输入的key找不到的时候的处理；实际上信令网关根本不管管理节点是否删除成功，信令网关会删除，所以管理节点不论操作结果是什么都返回200OK就行
         if (valueStr == null) {
@@ -127,8 +128,9 @@ public class EtcdService {
         JSONObject jsonObject = JSON.parseObject(valueStr);
         String nodeId = (String) jsonObject.get("NODEID");
         //注意这里要删除两个表里面的数据
-        EtcdUtil.deleteEtcdValueByKey(EtcdConfig.UeidInfo + ueid);
-        EtcdUtil.deleteEtcdValueByKey(EtcdConfig.NodeUeId + nodeId + "_" + ueid);
+        EtcdUtil.deleteEtcdValueByKey(EtcdConfig.UeidInfo + uplinkueid + "_" + downlinkueid);
+        EtcdUtil.deleteEtcdValueByKey(EtcdConfig.NodeUeId + nodeId + "_" + uplinkueid);
+        EtcdUtil.deleteEtcdValueByKey(EtcdConfig.NodeUeId + nodeId + "_" + downlinkueid);
     }
 
     /**
