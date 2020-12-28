@@ -66,8 +66,7 @@ public class DeleteHandler extends BaseHttpHandler {
     protected EnumHttpStatus doHandlePut(Map<String, String> parameters) throws Exception{
         String uplinkueid = parameters.get("uplink_ueid");
         String downlinkueid = parameters.get("downlink_ueid");
-        String stmsi = parameters.get("s_tmsi");
-        etcdService.deleteUeidAndStmsiFromEtcd(uplinkueid, downlinkueid, stmsi);
+        etcdService.deleteUeidAndStmsiFromEtcd(uplinkueid, downlinkueid);
         return EnumHttpStatus.DELETESUCCESS;
     }
 

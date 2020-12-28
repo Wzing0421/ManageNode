@@ -170,5 +170,15 @@ public class EtcdServiceTest {
         etcdService.putNodeIdAndNodeIpIntoEtcd(key, value);
         String res = etcdService.getValueFromEtcdByKey("NODEID_3");
         Assert.assertNotNull(res);
-    }*/
+    }
+
+    @Test
+    public void TestGetAllUEIDsByNodeIdFromEtcd() throws Exception {
+
+        List<String> kvList = etcdService.getAllUEIDsByNodeIdFromEtcd(2);
+        kvList.forEach(System.out::println);
+    }
+    */
+
+
 }

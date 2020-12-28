@@ -151,8 +151,8 @@ public class CreateHandler extends BaseHttpHandler implements InitializingBean {
                 System.out.println("[info]Create Handler: write to etcd: key= " + uplinkueid + "_" + downlinkueid + " , value = " + valueStr);
                 //上行和下行的ueid以_分割: UEID_uplinkueid_downlinkueid
                 etcdService.putUeidAndStmsiNodeIdUeIpImsIp(EtcdConfig.UeidInfo + uplinkueid + "_" + downlinkueid, valueStr);
-                etcdService.putNodeIdANdUeIdIntoEtcd(nodeId, uplinkueid);
-                etcdService.putNodeIdANdUeIdIntoEtcd(nodeId, downlinkueid);
+                etcdService.putNodeIdANdUeIdIntoEtcd(nodeId, uplinkueid + "_" + downlinkueid);
+                //etcdService.putNodeIdANdUeIdIntoEtcd(nodeId, downlinkueid);
 
                 //返回状态码为200
                 return EnumHttpStatus.AVAILABLE;

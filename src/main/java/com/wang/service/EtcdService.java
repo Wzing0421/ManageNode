@@ -32,6 +32,39 @@ public class EtcdService {
     }
 
     /**
+     *
+     * @param nodeId
+     * @return All UEIDs( uplink ueid and downlink ueid) on specific nodeId
+     * @throws Exception
+     */
+    public List<String> getAllUEIDsByNodeIdFromEtcd(Integer nodeId) throws Exception {
+        EtcdUtil.getEtcdClient();
+        List<KeyValue> kvs = EtcdUtil.getEtcdKeyValueByKeyPrefix(EtcdConfig.NodeUeId + Integer.toString(nodeId));
+        return getUEIDs(kvs);
+    }
+
+    /**
+     * get Uplink ueid and downlink ueid fron kvs list
+     * @param kvs
+     * @return
+     */
+    private List<String> getUEIDs(List<KeyValue> kvs){
+        List<String> UEIDsList = new ArrayList<>();
+        for (KeyValue kv : kvs) {
+            String key = kv.getKey().toString(UTF_8);
+            String[] value = key.split("_");
+            if (value.length != 4) {
+                System.out.println("Error: Node length != 4 key is : " + key);
+            } else {
+
+                // key is: NODEUEID_<nodeId>_<uplinkueid>_<downlinkueid>, so get the third and the forth params
+                UEIDsList.add(value[2] + "_" + value[3]);
+            }
+        }
+        return UEIDsList;
+    }
+
+    /**
      * get Integer from NodeList's key
      *
      * @param kvs
@@ -66,7 +99,8 @@ public class EtcdService {
     public Long getCallCountFromEtcdByNodeId(Integer id) throws Exception {
         EtcdUtil.getEtcdClient();
         String prefix = EtcdConfig.NodeUeId + Integer.toString(id);
-        return EtcdUtil.getEtcdKeyCountByKeyPrefix(prefix);
+        // 注意: NODEUEID_<nodeId>_<uplinkueid>_<downlinkueid>实际上存放了两路的通话
+        return 2 * EtcdUtil.getEtcdKeyCountByKeyPrefix(prefix);
     }
 
     /**
@@ -114,10 +148,9 @@ public class EtcdService {
      *
      * @param uplinkueid
      * @param downlinkueid
-     * @param stmsi
      * @throws Exception
      */
-    public void deleteUeidAndStmsiFromEtcd(String uplinkueid, String downlinkueid, String stmsi) throws Exception {
+    public void deleteUeidAndStmsiFromEtcd(String uplinkueid, String downlinkueid) throws Exception {
         EtcdUtil.getEtcdClient();
         String keyStr = EtcdConfig.UeidInfo + uplinkueid + "_" + downlinkueid;
         String valueStr = EtcdUtil.getEtcdValueByKey(keyStr);
@@ -129,8 +162,31 @@ public class EtcdService {
         String nodeId = (String) jsonObject.get("NODEID");
         //注意这里要删除两个表里面的数据
         EtcdUtil.deleteEtcdValueByKey(EtcdConfig.UeidInfo + uplinkueid + "_" + downlinkueid);
-        EtcdUtil.deleteEtcdValueByKey(EtcdConfig.NodeUeId + nodeId + "_" + uplinkueid);
-        EtcdUtil.deleteEtcdValueByKey(EtcdConfig.NodeUeId + nodeId + "_" + downlinkueid);
+        EtcdUtil.deleteEtcdValueByKey(EtcdConfig.NodeUeId + nodeId + "_" + uplinkueid + "_" + downlinkueid);
+        //EtcdUtil.deleteEtcdValueByKey(EtcdConfig.NodeUeId + nodeId + "_" + downlinkueid);
+    }
+
+    /**
+     * 删除指定 nodeId 和ueid(uplinkueid, downlinkueid)的数据
+     * @param nodeId
+     * @param ueid
+     * @throws Exception
+     */
+    public void deleteNodeUEIDFromEtcd(Integer nodeId, String ueid) throws Exception{
+        EtcdUtil.getEtcdClient();
+        String keyStr = EtcdConfig.NodeUeId + Integer.toString(nodeId) + "_" + ueid;
+        EtcdUtil.deleteEtcdValueByKey(keyStr);
+    }
+
+    public JSONObject getJsonObjectByUEID(String uplinkueid, String downlinkueid) throws Exception {
+        EtcdUtil.getEtcdClient();
+        String keyStr = EtcdConfig.UeidInfo + uplinkueid + "_" + downlinkueid;
+        String valueStr = EtcdUtil.getEtcdValueByKey(keyStr);
+        //这种是当输入的key找不到的时候的处理；实际上信令网关根本不管管理节点是否删除成功，信令网关会删除，所以管理节点不论操作结果是什么都返回200OK就行
+        if (valueStr == null) {
+            return null;
+        }
+        return JSON.parseObject(valueStr);
     }
 
     /**
