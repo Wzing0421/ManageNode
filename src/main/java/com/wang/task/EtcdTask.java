@@ -51,12 +51,12 @@ public class EtcdTask implements InitializingBean {
      * heart beat frequency is 5s/times.
      * If current_time - timestamp >= 12 it means node down, so delete it
      */
-    @Scheduled(initialDelay = 1000, fixedDelay = 1000 * 20)
+    @Scheduled(initialDelay = 1000, fixedDelay = 1000 * 12)
     public void scanNodeTimeout() throws Exception{
         long millisecond1 = new Date().getTime();
         List<Integer> timeoutNodeList = new ArrayList<>();
         for(Integer key : NodeLastHeartBeatMap.keySet()){
-            if( ((millisecond1 - NodeLastHeartBeatMap.get(key).getTime()) / 1000) >= 20){
+            if( ((millisecond1 - NodeLastHeartBeatMap.get(key).getTime()) / 1000) >= 12){
                 timeoutNodeList.add(key);
             }
         }
