@@ -95,6 +95,7 @@ public class CreateHandler extends BaseHttpHandler implements InitializingBean {
         String ueport = parameters.get("ueport");
         String imsip = parameters.get("imsip");
         String imsport = parameters.get("imsport");
+        String audiopt = parameters.get("audiopt");
 
         if(uplinkueid == null){
             System.out.println("[Error] Create Handler: get null uplinkueid");
@@ -124,7 +125,10 @@ public class CreateHandler extends BaseHttpHandler implements InitializingBean {
             System.out.println("[Error] Create Handler: get null imsport");
             return EnumHttpStatus.NULLPARAM;
         }
-
+        if(audiopt == null){
+            System.out.println("[Error] Create Handler: get null audiopt");
+            return EnumHttpStatus.NULLPARAM;
+        }
         //2. 获得一个空闲的节点
         for(int i = 0; i < RetryTimes; i++){
             Integer nodeId = getNodeId();
@@ -146,6 +150,7 @@ public class CreateHandler extends BaseHttpHandler implements InitializingBean {
                 object.put("UEPORT", ueport);
                 object.put("IMSIP", imsip);
                 object.put("IMSPORT", imsport);
+                object.put("AUDIOPT", audiopt);
 
                 String valueStr = object.toJSONString();
                 System.out.println("[info]Create Handler: write to etcd: key= " + uplinkueid + "_" + downlinkueid + " , value = " + valueStr);
